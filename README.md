@@ -24,14 +24,14 @@ This project is created as a assignment for a university.
 
 # Used libraries and other sources:
 
-* [IRremoteESP8266][https://github.com/crankyoldgit/IRremoteESP8266 "lib"]
+* [IRremoteESP8266](https://github.com/crankyoldgit/IRremoteESP8266 "lib")
 
-* [ESPAsyncWebServer][https://github.com/me-no-dev/ESPAsyncWebServer "lib"]
+* [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer "lib")
 
-* [AsyncTCP][https://github.com/me-no-dev/AsyncTCP "lib"]
+* [AsyncTCP](https://github.com/me-no-dev/AsyncTCP "lib")
 
-* [ESPAsyncTCP][https://github.com/me-no-dev/ESPAsyncTCP "lib"]
+* [ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP "lib")
 
-* [IR CODES][http://woodsgood.ca/projects/2015/02/13/rgb-led-strip-controllers-ir-codes/ "other"]
+* [IR CODES](http://woodsgood.ca/projects/2015/02/13/rgb-led-strip-controllers-ir-codes/ "other")
 
-* [Simple LED calculator][http://led.linear1.org/1led.wiz "other"]
+* [Simple LED calculator](http://led.linear1.org/1led.wiz "other")
