@@ -1,0 +1,42 @@
+@import url(https://cdn.jsdelivr.net/gh/tonsky/FiraCode@1.207/distr/fira_code.css);
+
+
+* {
+    width: 100%;
+    font-family: 'Fira Code', monospace;
+    box-sizing: border-box;
+}
+
+.containter {
+    max-width: 600px;
+}
+
+.remoteBg {
+    background-color: #D0D0D0;
+    border: 0.2em solid #BCBCBC;
+    width: 100%;
+    margin: auto;
+    border-radius: 2em;
+    padding: 0.5em;
+    padding-top: 1.5em;
+    padding-bottom: 1em;
+    margin-top: 3em;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr [col-start]);
+}
+
+button {
+    color:black;
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    transition-duration: 0.3s;
+    cursor: pointer;
+    text-align: center;
+    font-weight: bold;
+    outline: none;
+    box-shadow: 0px 0px 10px gray;
+    border: none;
+    font-size: 0.9em;
+}
