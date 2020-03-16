@@ -3,12 +3,21 @@
     width: 100%;
     font-family: 'Fira Code', monospace;
     box-sizing: border-box;
-    font-size: 18px;
+    font-size: 17px;
+}
+
+.mainGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr [col-start]);
+}
+
+.mainItem {
+    grid-column: 2 / span 1;
 }
 
 .containter {
-    max-width: 450px;
-    min-width: 350px;
+    max-width: 400px;
+    min-width: 400px;
 }
 
 .remoteBg {
