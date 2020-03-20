@@ -15,17 +15,18 @@
 // #endif
 
 void SetupWiFi(const char *ssid, const char *password) {
+    Serial.println("Connecting to WiFi: " + String(ssid));
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(1000);
         Serial.println("Trying to connect...");
     }
+    Serial.println("Sucessfuly connected to " + String(ssid));
+    Serial.println("Device IP: " + WiFi.localIP().toString());
 }
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("Connecting to WiFi:");
-    Serial.println(ssid);
     SetupWiFi(ssid, password);
 }
 
