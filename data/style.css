@@ -6,6 +6,10 @@
     font-size: 17px;
 }
 
+body{
+    background-color: #808075;
+}
+
 .mainGrid {
     display: grid;
     grid-template-columns: repeat(3, 1fr [col-start]);
@@ -34,16 +38,17 @@
     grid-template-columns: repeat(4, 1fr [col-start]);
 }
 
-button a {
+a {
     text-decoration: none;
 }
 
-button a:hover {
+a:hover {
     text-decoration: none;
 }
 
-button a:visited {
+a:visited {
     text-decoration: none;
+    color: blue;
 }
 
 button {
@@ -66,19 +71,19 @@ button.red {
     background: radial-gradient(circle, rgba(255, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
-button.red1 {
+button.red2 {
     background: radial-gradient(circle, rgba(255, 76, 39, 1) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
-button.red2 {
+button.red3 {
     background: radial-gradient(circle, rgba(255, 99, 67, 1) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
-button.red3 {
+button.red4 {
     background: radial-gradient(circle, rgba(255, 177, 131, 1) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
-button.red4 {
+button.red5 {
     background: radial-gradient(circle, rgba(255, 255, 0, 1) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
