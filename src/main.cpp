@@ -14,6 +14,31 @@
 // const char *password = "xd";
 // #endif
 
+AsyncWebServer server(80);
+
+void SetupSpiffs();
+void SetupWiFi(const char *ssid, const char *password);
+void ConfigureWebpages(AsyncWebServer &server);
+
+void setup() {
+    Serial.begin(115200);
+    SetupSpiffs();
+    SetupWiFi(ssid, password);
+    ConfigureWebpages(server);
+    server.begin();
+    Serial.println("Server is up");
+}
+
+void loop() {
+    // put your main code here, to run repeatedly:
+}
+
+void SetupSpiffs() {
+    Serial.println("Startin SPIFFS");
+    if (!SPIFFS.begin())
+        Serial.println("Error durning initalizating SPIFFS");
+}
+
 void SetupWiFi(const char *ssid, const char *password) {
     Serial.println("Connecting to WiFi: " + String(ssid));
     WiFi.begin(ssid, password);
@@ -25,11 +50,107 @@ void SetupWiFi(const char *ssid, const char *password) {
     Serial.println("Device IP: " + WiFi.localIP().toString());
 }
 
-void setup() {
-    Serial.begin(115200);
-    SetupWiFi(ssid, password);
-}
+void ConfigureWebpages(AsyncWebServer &server) {
+    // Handling webpage with images
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/style.css", "text/css");
+    });
+    server.on("/empty.png", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/empty.png", "image/png");
+    });
+    server.on("/sunXS.png", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/sunXS.png", "image/png");
+    });
+    server.on("/moonXS.png", HTTP_GET, [](AsyncWebServerRequest *request) {
+        request->send(SPIFFS, "/moonXS.png", "image/png");
+    });
 
-void loop() {
-    // put your main code here, to run repeatedly:
+    // Handling remote interface
+    server.on("/red", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Red button pressed, Sending red IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/green", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Green button pressed, Sending green IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/blue", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Blue button pressed, Sending blue IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/white", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("White button pressed, Sending white IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    // Second row
+    server.on("/red2", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Red2 button pressed, Sending red2 IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/green2", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Green2 button pressed, Sending green2 IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/blue2", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Blue2 button pressed, Sending blue2 IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/flash", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Flash button pressed, Sending flash IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    // Third row
+    server.on("/red3", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Red3 button pressed, Sending red3 IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/green3", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Green3 button pressed, Sending green3 IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/blue3", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Blue3 button pressed, Sending blue3 IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/strobe", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Strobe button pressed, Sending strobe IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    // Fourth row
+    server.on("/red4", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Red4 button pressed, Sending red4 IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/green4", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Green4 button pressed, Sending green4 IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/blue4", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Blue4 button pressed, Sending blue4 IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/fade", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Fade button pressed, Sending fade IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    // Fifth row
+    server.on("/red5", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Red5 button pressed, Sending red5 IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/green5", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Green5 button pressed, Sending green5 IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/blue5", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Blue5 button pressed, Sending blue5 IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/smooth", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Smooth button pressed, Sending smooth IR code:");
+        request->send(SPIFFS, "/index.html");
+    });
 }
