@@ -5,6 +5,7 @@
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
 #include <IRremoteESP8266.h>
+#include <IRsend.h>
 
 // WiFi config in SafeStorage.h Template:
 // #ifndef SAFESTORAGE_H
@@ -14,6 +15,7 @@
 // const char *password = "xd";
 // #endif
 
+IRsend irsend(4);
 AsyncWebServer server(80);
 
 void SetupSpiffs();
@@ -27,10 +29,12 @@ void setup() {
     ConfigureWebpages(server);
     server.begin();
     Serial.println("Server is up");
+    pinMode(D2, OUTPUT);
 }
 
 void loop() {
-    // put your main code here, to run repeatedly:
+    irsend.sendNEC(0xF720DF, 32);
+    delay(500);
 }
 
 void SetupSpiffs() {
@@ -71,10 +75,12 @@ void ConfigureWebpages(AsyncWebServer &server) {
     // Handling remote interface
     server.on("/red", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Red button pressed, Sending red IR code:");
+        irsend.sendNEC(0xF720DF, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/green", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Green button pressed, Sending green IR code:");
+        irsend.sendNEC(0xF7A05F, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/blue", HTTP_GET, [](AsyncWebServerRequest *request) {
