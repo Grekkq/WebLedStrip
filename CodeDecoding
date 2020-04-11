@@ -1,0 +1,27 @@
+// Example code by Ken Shirriff
+// http://arcfn.com
+// With small adjustments by me to work with NodeMCU
+
+// #include <Arduino.h>
+// #include <IRrecv.h>
+// #include <IRremoteESP8266.h>
+// int RECV_PIN = D2; // define input pin on Arduino
+// IRrecv irrecv(RECV_PIN);
+// decode_results results; // decode_results class is defined in IRremote.h
+
+// void setup() {
+//     Serial.begin(115200);
+//     irrecv.enableIRIn(); // Start the receiver
+// }
+// char buff[60];
+// void loop() {
+//     if (irrecv.decode(&results)) {
+//         sprintf(buff, "%" PRIu64, results.value);
+//         Serial.println(buff);
+//         irrecv.resume(); // Receive the next value
+//     }
+//     delay(100); // small delay to prevent reading errors
+// }
+
+// Codes: [ name    decimal     hexadecimal]
+//          red     16748655    FF906F
