@@ -25,3 +25,26 @@
 
 // Codes: [ name    decimal     hexadecimal]
 //          red     16748655    FF906F
+//          red2    16756815    FFB04F
+//          red3    16754775    FFA857
+//          red4    16750695    FF9867
+//          red5    16746615    FF8877
+//          green   16716015    FF10EF
+//          green2  16724175    FF30CF
+//          green3  16722135    FF28D7
+//          green4  16718055    FF18E7
+//          green5  16713975    FF08F7
+//          blue    16732335    FF50AF
+//          blue2   16740495    FF708F
+//          blue3   16738455    FF6897
+//          blue4   16734375    FF58A7
+//          blue5   16730295    FF48B7
+//          white   16764975    FFD02F
+//          flash   16773135    FFF00F
+//          strobe  16771095    FFE817
+//          fade    16767015    FFD827
+//          smooth  16762935    FFC837
+//          lighter 16752735    FFA05F
+//          darker  16720095    FF20DF
+//          off     16736415    FF609F
+//          on      16769055    FFE01F
