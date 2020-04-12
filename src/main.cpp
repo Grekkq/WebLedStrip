@@ -18,6 +18,10 @@
 IRsend irsend(4);
 AsyncWebServer server(80);
 
+int mappedAnalog = 0;
+int soundTmp = 0;
+int soundCounter = 0;
+
 void SetupSpiffs();
 void SetupWiFi(const char *ssid, const char *password);
 void ConfigureWebpages(AsyncWebServer &server);
@@ -33,6 +37,32 @@ void setup() {
 }
 
 void loop() {
+    if (millis() % 10000 <= 10) {
+        soundCounter++;
+        mappedAnalog = map(analogRead(A0), 0, 1024, 0, 255);
+        // Serial.println("Mapped analog value: " + String(mappedAnalog));
+        soundTmp += mappedAnalog;
+        if (soundCounter >= 20) {
+            if (soundTmp / 20.0 <= 0.1) {
+                Serial.println("Power off: " + String(soundTmp));
+                irsend.sendNEC(0xFF609F, 32); // power off
+                soundTmp = -1;
+            } else if (soundTmp / 20.0 < 2) {
+                Serial.println("Brightness down: " + String(soundTmp));
+                irsend.sendNEC(0xFF20DF, 32); // brightness down
+                soundTmp = 0;
+            } else if (soundTmp / 20.0 > 4) {
+                Serial.println("Power on: " + String(soundTmp));
+                irsend.sendNEC(0xFFE01F, 32); // power on
+                soundTmp = 1;
+            } else {
+                Serial.println("Brightness up: " + String(soundTmp));
+                irsend.sendNEC(0xFFA05F, 32); // brightness up
+                soundTmp = 0;
+            }
+            soundCounter = 0;
+        }
+    }
 }
 
 void SetupSpiffs() {
