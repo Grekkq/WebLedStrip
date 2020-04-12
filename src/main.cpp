@@ -188,7 +188,7 @@ void ConfigureWebpages(AsyncWebServer &server) {
     server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("On button pressed, Sending on IR code:");
         irsend.sendNEC(0xFFE01F, 32);
-        request->send(SPIFFS, "/index.html");
+        request->send(SPIFFS, "/indexOff.html");
     });
     server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Off button pressed, Sending off IR code:");
