@@ -78,82 +78,121 @@ void ConfigureWebpages(AsyncWebServer &server) {
     });
     server.on("/green", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Green button pressed, Sending green IR code:");
+        irsend.sendNEC(0xFF10EF, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/blue", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Blue button pressed, Sending blue IR code:");
+        irsend.sendNEC(0xFF50AF, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/white", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("White button pressed, Sending white IR code:");
+        irsend.sendNEC(0xFFD02F, 32);
         request->send(SPIFFS, "/index.html");
     });
     // Second row
     server.on("/red2", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Red2 button pressed, Sending red2 IR code:");
+        irsend.sendNEC(0xFFB04F, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/green2", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Green2 button pressed, Sending green2 IR code:");
+        irsend.sendNEC(0xFF30CF, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/blue2", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Blue2 button pressed, Sending blue2 IR code:");
+        irsend.sendNEC(0xFF708F, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/flash", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Flash button pressed, Sending flash IR code:");
+        irsend.sendNEC(0xFFF00F, 32);
         request->send(SPIFFS, "/index.html");
     });
     // Third row
     server.on("/red3", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Red3 button pressed, Sending red3 IR code:");
+        irsend.sendNEC(0xFFA857, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/green3", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Green3 button pressed, Sending green3 IR code:");
+        irsend.sendNEC(0xFF28D7, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/blue3", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Blue3 button pressed, Sending blue3 IR code:");
+        irsend.sendNEC(0xFF6897, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/strobe", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Strobe button pressed, Sending strobe IR code:");
+        irsend.sendNEC(0xFFE817, 32);
         request->send(SPIFFS, "/index.html");
     });
     // Fourth row
     server.on("/red4", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Red4 button pressed, Sending red4 IR code:");
+        irsend.sendNEC(0xFF9867, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/green4", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Green4 button pressed, Sending green4 IR code:");
+        irsend.sendNEC(0xFF188E7, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/blue4", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Blue4 button pressed, Sending blue4 IR code:");
+        irsend.sendNEC(0xFF58A7, 32); // TODO: bad code, need redecoding
         request->send(SPIFFS, "/index.html");
     });
     server.on("/fade", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Fade button pressed, Sending fade IR code:");
+        irsend.sendNEC(0xFFD827, 32);
         request->send(SPIFFS, "/index.html");
     });
     // Fifth row
     server.on("/red5", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Red5 button pressed, Sending red5 IR code:");
+        irsend.sendNEC(0xFF8877, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/green5", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Green5 button pressed, Sending green5 IR code:");
+        irsend.sendNEC(0xFF08F7, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/blue5", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Blue5 button pressed, Sending blue5 IR code:");
+        irsend.sendNEC(0xFF48B7, 32);
         request->send(SPIFFS, "/index.html");
     });
     server.on("/smooth", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Smooth button pressed, Sending smooth IR code:");
+        irsend.sendNEC(0xFFC837, 32);
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/brightnessUp", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Lighter button pressed, Sending lighter IR code:");
+        irsend.sendNEC(0xFFA05F, 32);
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/brightnessDown", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Darker button pressed, Sending darker IR code:");
+        irsend.sendNEC(0xFF20DF, 32);
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("On button pressed, Sending on IR code:");
+        irsend.sendNEC(0xFFE01F, 32);
+        request->send(SPIFFS, "/index.html");
+    });
+    server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Off button pressed, Sending off IR code:");
+        irsend.sendNEC(0xFF609F, 32);
         request->send(SPIFFS, "/index.html");
     });
 }
