@@ -91,19 +91,19 @@ button.green {
     background: radial-gradient(circle, rgba(0, 255, 55, 1) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
-button.green1 {
+button.green2 {
     background: radial-gradient(circle, rgba(148, 255, 117, 1) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
-button.green2 {
+button.green3 {
     background: radial-gradient(circle, rgb(0, 225, 255) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
-button.green3 {
+button.green4 {
     background: radial-gradient(circle, rgb(50, 139, 255) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
-button.green4 {
+button.green5 {
     background: radial-gradient(circle, rgb(38, 0, 255) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
@@ -111,19 +111,19 @@ button.blue {
     background: radial-gradient(circle, rgba(3, 0, 255, 1) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
-button.blue1 {
+button.blue2 {
     background: radial-gradient(circle, rgb(47, 10, 255) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
-button.blue2 {
+button.blue3 {
     background: radial-gradient(circle, rgb(57, 0, 126) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
-button.blue3 {
+button.blue4 {
     background: radial-gradient(circle, rgb(122, 21, 255) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
-button.blue4 {
+button.blue5 {
     background: radial-gradient(circle, rgb(226, 129, 255) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
 
