@@ -10,6 +10,12 @@ body{
     background-color: #808075;
 }
 
+.autoLevel {
+    display: grid;
+    grid-template: none;
+    text-align: center;
+}
+
 .mainGrid {
     display: grid;
     grid-template-columns: repeat(3, 1fr [col-start]);
@@ -162,6 +168,10 @@ button.lighter-item {
     opacity: 0;
     width: 0;
     height: 0;
+}
+
+input:disabled+.slider {
+    opacity: 0.4;
 }
 
 .slider {

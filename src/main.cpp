@@ -21,10 +21,14 @@ AsyncWebServer server(80);
 int mappedAnalog = 0;
 int soundTmp = 0;
 int soundCounter = 0;
+bool autoMode = false;
+bool isEnabled = true;
 
 void SetupSpiffs();
 void SetupWiFi(const char *ssid, const char *password);
 void ConfigureWebpages(AsyncWebServer &server);
+void HanldeSoundLevelDetection(float samplesCount);
+void PowerOnAfterReset();
 
 void setup() {
     Serial.begin(115200);
@@ -34,40 +38,71 @@ void setup() {
     server.begin();
     Serial.println("Server is up");
     pinMode(D2, OUTPUT);
+    PowerOnAfterReset();
 }
 
 void loop() {
-    if (true) {
-        HanldeSoundLevelDetection(20.0);
+    if (millis() % 10000 <= 10) {
+        if (autoMode)
+            HanldeSoundLevelDetection(20.0);
     }
 }
 
 void HanldeSoundLevelDetection(float samplesCount) {
-    if (millis() % 10000 <= 10) {
-        soundCounter++;
-        mappedAnalog = map(analogRead(A0), 0, 1024, 0, 255);
-        soundTmp += mappedAnalog;
-        if (soundCounter >= samplesCount) {
-            if (soundTmp / samplesCount <= samplesCount * 0.01) {
-                Serial.println("Power off: " + String(soundTmp));
-                irsend.sendNEC(0xFF609F, 32); // power off
-                soundTmp = 0;
-            } else if (soundTmp / samplesCount < samplesCount * 0.1) {
-                Serial.println("Brightness down: " + String(soundTmp));
-                irsend.sendNEC(0xFF20DF, 32); // brightness down
-                soundTmp = samplesCount / 2;
-            } else if (soundTmp / samplesCount < samplesCount * 0.4) {
-                Serial.println("Brightness up: " + String(soundTmp));
-                irsend.sendNEC(0xFFA05F, 32); // brightness up
-                soundTmp = samplesCount;
-            } else {
-                Serial.println("Power on: " + String(soundTmp));
+
+    soundCounter++;
+    mappedAnalog = map(analogRead(A0), 0, 1024, 0, 255);
+    soundTmp += mappedAnalog;
+    if (soundCounter >= samplesCount) {
+        if (soundTmp / samplesCount <= samplesCount * 0.025) {
+            Serial.println("Power off: " + String(soundTmp));
+            irsend.sendNEC(0xFF609F, 32); // power off
+            soundTmp = 0;
+            isEnabled = false;
+        } else if (soundTmp / samplesCount < samplesCount * 0.15) {
+            if (!isEnabled) {
+                isEnabled = true;
+                Serial.println("Brightness down after off");
                 irsend.sendNEC(0xFFE01F, 32); // power on
-                soundTmp = samplesCount * 2;
+                for (int i = 0; i < 7; i++) {
+                    irsend.sendNEC(0xFF20DF, 32); // brightness down
+                    delay(5);
+                }
             }
-            soundCounter = 0;
+            Serial.println("Brightness down: " + String(soundTmp));
+            irsend.sendNEC(0xFF20DF, 32); // brightness down
+            soundTmp = samplesCount / 2.5;
+        } else if (soundTmp / samplesCount < samplesCount * 0.4) {
+            if (!isEnabled) {
+                isEnabled = true;
+                Serial.println("Brightness up after off");
+                irsend.sendNEC(0xFFE01F, 32); // power on
+                for (int i = 0; i < 7; i++) {
+                    irsend.sendNEC(0xFFA05F, 32); // brightness up
+                    delay(5);
+                }
+            }
+            Serial.println("Brightness up: " + String(soundTmp));
+            irsend.sendNEC(0xFFA05F, 32); // brightness up
+            soundTmp = samplesCount / 1.5;
+        } else {
+            Serial.println("Power on: " + String(soundTmp));
+            irsend.sendNEC(0xFFE01F, 32); // power on
+            soundTmp = samplesCount * 2;
+            isEnabled = true;
         }
+        soundCounter = 0;
     }
+}
+
+void PowerOnAfterReset() {
+    Serial.println("Powering on after restart");
+    irsend.sendNEC(0xFFE01F, 32);
+    delay(10);
+    irsend.sendNEC(0xFFE01F, 32);
+    delay(10);
+    irsend.sendNEC(0xFFE01F, 32);
+    delay(10);
 }
 
 void SetupSpiffs() {
@@ -226,11 +261,30 @@ void ConfigureWebpages(AsyncWebServer &server) {
     server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Sending on IR code:");
         irsend.sendNEC(0xFFE01F, 32);
+        isEnabled = true;
         request->send(200);
     });
     server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Sending off IR code:");
         irsend.sendNEC(0xFF609F, 32);
+        isEnabled = false;
         request->send(200);
+    });
+    server.on("/autoOn", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Enabling auto mode.");
+        autoMode = true;
+        request->send(200);
+    });
+    server.on("/autoOff", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Disabling auto mode.");
+        autoMode = false;
+        request->send(200);
+    });
+    server.on("/checkState", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Checking state.");
+        if (isEnabled)
+            request->send(200, "text/plain", "on");
+        else
+            request->send(200, "text/plain", "off");
     });
 }

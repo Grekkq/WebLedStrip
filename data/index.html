@@ -8,17 +8,21 @@
     <link rel="icon" type="image/png" href="led-strip.png">
 </head>
 
-<body>
+<body onload="CheckState()">
+    <div class="autoLevel">
+        <div><label class="switch"><input type="checkbox" id="autoMode" onclick="CheckAutoMode()"><span
+                    class="slider round"></span></label></div>
+        Auto Brightness
+    </div>
     <div class="mainGrid">
         <div class="mainItem">
             <div class="containter">
                 <div class="remoteBg">
-                    <button class="lighter-item" onclick="ButtonPressed('brightnessUp')"><img
-                                src="sunXS.png"></button>
+                    <button class="lighter-item" onclick="ButtonPressed('brightnessUp')"><img src="sunXS.png"></button>
                     <button class="darker-item" onclick="ButtonPressed('brightnessDown')"><img
-                                src="moonXS.png"></button>
-                    <button class="switch-item"><label class="switch"><input type="checkbox" id="powerButton"
-                                onclick="CheckPowerState()"><span class="slider round"></span></label></button>
+                            src="moonXS.png"></button>
+                    <button class="switch-item"><label class="switch" onclick="PowerMode()"><input type="checkbox"
+                                id="powerButton"><span class="slider round"></span></label></button>
 
                     <button class="red" onclick="ButtonPressed('red')"><img src="empty.png"></button>
                     <button class="green" onclick="ButtonPressed('green')"></button>
@@ -76,17 +80,44 @@
     </div>
 
     <script>
-        function CheckPowerState() {
+        function CheckAutoMode() {
+            var chkBox = document.getElementById('autoMode');
+            if (chkBox.checked) {
+                ButtonPressed("autoOn");
+                document.getElementById('powerButton').disabled = true;
+            }
+            else {
+                ButtonPressed("autoOff");
+                document.getElementById('powerButton').disabled = false;
+                CheckState();
+            }
+        }
+        function PowerMode() {
             var chkBox = document.getElementById('powerButton');
             if (chkBox.checked)
                 ButtonPressed("on");
             else
                 ButtonPressed("off");
         }
+        function CheckState() {
+            var xhttp = new XMLHttpRequest()
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4 && xhttp.status == 200)
+                    HandleResponse(xhttp.responseText);
+            }
+            xhttp.open("GET", "/checkState", true);
+            xhttp.send(null);
+        }
         function ButtonPressed(buttonName) {
             var xhttp = new XMLHttpRequest()
             xhttp.open("GET", "/" + buttonName, true);
             xhttp.send();
+        }
+        function HandleResponse(response) {
+            if (response.includes("on"))
+                document.getElementById('powerButton').checked = true;
+            else
+                document.getElementById('powerButton').checked = false;
         }
     </script>
 </body>
