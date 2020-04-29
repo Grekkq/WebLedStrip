@@ -1,5 +1,6 @@
 #include "SafeStorage.h"
 #include <Arduino.h>
+#include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
@@ -17,18 +18,23 @@
 
 IRsend irsend(4);
 AsyncWebServer server(80);
+HTTPClient http;
 
 int mappedAnalog = 0;
 int soundTmp = 0;
 int soundCounter = 0;
+int telemetryCounter = 0;
+int brightnessLevel = 0;
 bool autoMode = false;
 bool isEnabled = true;
+bool isTelemetryEnabled = false;
 
 void SetupSpiffs();
 void SetupWiFi(const char *ssid, const char *password);
 void ConfigureWebpages(AsyncWebServer &server);
 void HanldeSoundLevelDetection(float samplesCount);
 void PowerOnAfterReset();
+void HanldeTelemetry(int speedometer);
 
 void setup() {
     Serial.begin(115200);
@@ -45,11 +51,25 @@ void loop() {
     if (millis() % 10000 <= 10) {
         if (autoMode)
             HanldeSoundLevelDetection(20.0);
+        if (isTelemetryEnabled)
+            HanldeTelemetry(50);
+    }
+}
+
+void HanldeTelemetry(int speedometer) {
+    telemetryCounter++;
+    Serial.println("test");
+    if (telemetryCounter >= speedometer) {
+        Serial.println("Sending telemetry data");
+        http.begin(String("http://api.thingspeak.com/update?api_key=LUZF4ZHCS2NPYCNS&field1=" + String(brightnessLevel)));
+        http.addHeader("Content-Type", "text/plain");
+        http.GET();
+        http.end();
+        telemetryCounter = 0;
     }
 }
 
 void HanldeSoundLevelDetection(float samplesCount) {
-
     soundCounter++;
     mappedAnalog = map(analogRead(A0), 0, 1024, 0, 255);
     soundTmp += mappedAnalog;
@@ -58,38 +78,40 @@ void HanldeSoundLevelDetection(float samplesCount) {
             Serial.println("Power off: " + String(soundTmp));
             irsend.sendNEC(0xFF609F, 32); // power off
             soundTmp = 0;
+            brightnessLevel = 0;
             isEnabled = false;
         } else if (soundTmp / samplesCount < samplesCount * 0.15) {
+            if (brightnessLevel-- <= 0)
+                brightnessLevel = 1;
             if (!isEnabled) {
                 isEnabled = true;
                 Serial.println("Brightness down after off");
                 irsend.sendNEC(0xFFE01F, 32); // power on
-                for (int i = 0; i < 7; i++) {
+                for (int i = 0; i < 11; i++) {
                     irsend.sendNEC(0xFF20DF, 32); // brightness down
                     delay(5);
                 }
+                brightnessLevel = 1;
             }
             Serial.println("Brightness down: " + String(soundTmp));
             irsend.sendNEC(0xFF20DF, 32); // brightness down
             soundTmp = samplesCount / 2.5;
-        } else if (soundTmp / samplesCount < samplesCount * 0.4) {
+        } else {
+            if (brightnessLevel++ > 10)
+                brightnessLevel = 10;
             if (!isEnabled) {
                 isEnabled = true;
                 Serial.println("Brightness up after off");
                 irsend.sendNEC(0xFFE01F, 32); // power on
-                for (int i = 0; i < 7; i++) {
+                for (int i = 0; i < 11; i++) {
                     irsend.sendNEC(0xFFA05F, 32); // brightness up
                     delay(5);
                 }
+                brightnessLevel = 10;
             }
             Serial.println("Brightness up: " + String(soundTmp));
             irsend.sendNEC(0xFFA05F, 32); // brightness up
             soundTmp = samplesCount / 1.5;
-        } else {
-            Serial.println("Power on: " + String(soundTmp));
-            irsend.sendNEC(0xFFE01F, 32); // power on
-            soundTmp = samplesCount * 2;
-            isEnabled = true;
         }
         soundCounter = 0;
     }
@@ -101,8 +123,11 @@ void PowerOnAfterReset() {
     delay(10);
     irsend.sendNEC(0xFFE01F, 32);
     delay(10);
-    irsend.sendNEC(0xFFE01F, 32);
-    delay(10);
+    for (int i = 0; i < 11; i++) {
+        irsend.sendNEC(0xFFA05F, 32); // brightness up
+        delay(5);
+    }
+    brightnessLevel = 10;
 }
 
 void SetupSpiffs() {
@@ -249,22 +274,28 @@ void ConfigureWebpages(AsyncWebServer &server) {
         request->send(200);
     });
     server.on("/brightnessUp", HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (brightnessLevel++ > 10)
+            brightnessLevel = 10;
         Serial.println("Sending lighter IR code:");
         irsend.sendNEC(0xFFA05F, 32);
         request->send(200);
     });
     server.on("/brightnessDown", HTTP_GET, [](AsyncWebServerRequest *request) {
+        if (brightnessLevel-- <= 1)
+            brightnessLevel = 1;
         Serial.println("Sending darker IR code:");
         irsend.sendNEC(0xFF20DF, 32);
         request->send(200);
     });
     server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request) {
+        brightnessLevel = 10;
         Serial.println("Sending on IR code:");
         irsend.sendNEC(0xFFE01F, 32);
         isEnabled = true;
         request->send(200);
     });
     server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request) {
+        brightnessLevel = 0;
         Serial.println("Sending off IR code:");
         irsend.sendNEC(0xFF609F, 32);
         isEnabled = false;
@@ -280,11 +311,28 @@ void ConfigureWebpages(AsyncWebServer &server) {
         autoMode = false;
         request->send(200);
     });
+    server.on("/telemetryOn", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Enabling telemetry.");
+        isTelemetryEnabled = true;
+        request->send(200);
+    });
+    server.on("/telemetryOff", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Disabling telemetry.");
+        isTelemetryEnabled = false;
+        request->send(200);
+    });
     server.on("/checkState", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Checking state.");
-        if (isEnabled)
-            request->send(200, "text/plain", "on");
-        else
-            request->send(200, "text/plain", "off");
+        if (isTelemetryEnabled) {
+            if (isEnabled)
+                request->send(200, "text/plain", "lightsOn,telemetryOn");
+            else
+                request->send(200, "text/plain", "lightsOff,,telemetryOn");
+        } else {
+            if (isEnabled)
+                request->send(200, "text/plain", "lightsOn,telemetryOff");
+            else
+                request->send(200, "text/plain", "lightsOff,,telemetrOff");
+        }
     });
 }

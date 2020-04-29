@@ -9,11 +9,7 @@
 </head>
 
 <body onload="CheckState()">
-    <div class="autoLevel">
-        <div><label class="switch"><input type="checkbox" id="autoMode" onclick="CheckAutoMode()"><span
-                    class="slider round"></span></label></div>
-        Auto Brightness
-    </div>
+
     <div class="mainGrid">
         <div class="mainItem">
             <div class="containter">
@@ -53,6 +49,18 @@
         </div>
         <div class="mainItem">
             <br />
+            <div class="autoLevel">
+                <div><label class="switch"><input type="checkbox" id="autoMode" onclick="CheckAutoMode()"><span
+                            class="slider round"></span></label></div>
+                Auto Brightness
+            </div>
+            <br />
+            <div class="autoLevel">
+                <div><label class="switch"><input type="checkbox" id="telemetryMode"
+                            onclick="CheckTelemetryMode()"><span class="slider round"></span></label></div>
+                Telemetry <i>(might not work correctly if used without auto mode)</i>
+            </div>
+            <br />
             <br />
             <div>Appreciate the artist:</div>
             <ul>
@@ -85,12 +93,18 @@
             if (chkBox.checked) {
                 ButtonPressed("autoOn");
                 document.getElementById('powerButton').disabled = true;
-            }
-            else {
+            } else {
                 ButtonPressed("autoOff");
                 document.getElementById('powerButton').disabled = false;
                 CheckState();
             }
+        }
+        function CheckTelemetryMode() {
+            var chkBox = document.getElementById('telemetryMode');
+            if (chkBox.checked)
+                ButtonPressed("telemetryOn");
+            else
+                ButtonPressed("telemetryOff");
         }
         function PowerMode() {
             var chkBox = document.getElementById('powerButton');
@@ -114,10 +128,14 @@
             xhttp.send();
         }
         function HandleResponse(response) {
-            if (response.includes("on"))
+            if (response.includes("lightsOn"))
                 document.getElementById('powerButton').checked = true;
             else
                 document.getElementById('powerButton').checked = false;
+            if (response.includes("telemetryOn"))
+                document.getElementById('telemetryMode').checked = true;
+            else
+                document.getElementById('telemetryMode').checked = false;
         }
     </script>
 </body>
