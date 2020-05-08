@@ -35,3 +35,13 @@ This project is created as a assignment for a university.
 * [IR CODES](http://woodsgood.ca/projects/2015/02/13/rgb-led-strip-controllers-ir-codes/ "other")
 
 * [Simple LED calculator](http://led.linear1.org/1led.wiz "other")
+
+# How to compile my own version:
+
+1) You have to download source code from Github, and get PlatformIO. _(Personally I recommend just getting platformio plugin for Visual Studio Code but it is up to you)_
+
+2) Now you can chang code however you like and when ready you will build your solution.
+
+3) Hopefully there were no errors. If so connect your NodeMCU with USB cable to the computer and hit upload. _(If you made any changes int "data" folder you will also have to update "File System Image")_
+
+ 4) And that's all, if everything works as expected you are good to go. Now you can disconnect the device and set it up on the desired spot.
