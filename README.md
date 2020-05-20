@@ -44,4 +44,29 @@ This project is created as a assignment for a university.
 
 3) Hopefully there were no errors. If so connect your NodeMCU with USB cable to the computer and hit upload. _(If you made any changes int "data" folder you will also have to update "File System Image")_
 
- 4) And that's all, if everything works as expected you are good to go. Now you can disconnect the device and set it up on the desired spot.
+4) And that's all, if everything works as expected you are good to go. Now you can disconnect the device and set it up on the desired spot.
+
+# How to add another remote:
+
+- Make UI for new remote, if you feel like lazy you can just copy/paste the previous one. _(Order isn't important but i usually do it like that)_
+
+- Make sure that you changed `blue` in html `onclick="ButtonPressed('blue')` to your own feature name.
+
+- In main.cpp add reaction for new requests, you have to extend `void ConfigureWebpages(AsyncWebServer &server)`. If you want to sent just simple IR code use:
+```cpp
+server.on("/yourFeatureName", HTTP_GET, [](AsyncWebServerRequest *request) {
+        Serial.println("Sending your IR code"); // This line is just so you can see result in console
+        irsend.sendNEC(0xFF906F, 32); // Use your decoded code
+        request->send(200); // Just so we can meet the requirements of http request
+    });
+```
+
+- And that's all, now you can build and upload new code to your device. _(Don't forget to update "File System Image")_
+
+# How to use decoder
+
+1) First you have to create new project and replace automaticly genereted code with code from file "CodeDecoding". _(Or you can just temporaily comment whole main.cpp)_
+
+2) After that you have to go to platformio.ini and comment out `lib_deps = ESP Async WebServer, ESPAsyncTCP, IRremoteESP8266` _(Just add `;` at the start of line)_ and uncomment `lib_deps = IRremoteESP8266`. After that hit Upload and Monitor.
+
+3) When monitor start you can point your remote onto sensor. The decoded signal should start to appear after each button press. _(If you get inconsisten results try to press button just once and wait a moment, sometimes buffor that stores signal doesn't go back to zero in time)_
