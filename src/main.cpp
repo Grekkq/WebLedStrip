@@ -7,6 +7,7 @@
 #include <FS.h>
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
+#include <ESP8266mDNS.h>
 
 // WiFi config in SafeStorage.h Template:
 // #ifndef SAFESTORAGE_H
@@ -45,6 +46,10 @@ void setup() {
     Serial.println("Server is up");
     pinMode(D2, OUTPUT);
     PowerOnAfterReset();
+    if (MDNS.begin("ledonline"))
+        Serial.println("MDNS started");
+    delay(1000);
+    MDNS.update();
 }
 
 void loop() {
@@ -58,10 +63,9 @@ void loop() {
 
 void HanldeTelemetry(int speedometer) {
     telemetryCounter++;
-    Serial.println("test");
     if (telemetryCounter >= speedometer) {
         Serial.println("Sending telemetry data");
-        http.begin(String("http://api.thingspeak.com/update?api_key=LUZF4ZHCS2NPYCNS&field1=" + String(brightnessLevel)));
+        http.begin(String("http://api.thingspeak.com/update?api_key=" + String(apiThingSpeak) + "&field1=" + String(brightnessLevel)));
         http.addHeader("Content-Type", "text/plain");
         http.GET();
         http.end();
@@ -137,6 +141,7 @@ void SetupSpiffs() {
 }
 
 void SetupWiFi(const char *ssid, const char *password) {
+    WiFi.hostname("ledonline");
     Serial.println("Connecting to WiFi: " + String(ssid));
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
@@ -145,6 +150,7 @@ void SetupWiFi(const char *ssid, const char *password) {
     }
     Serial.println("Sucessfuly connected to " + String(ssid));
     Serial.println("Device IP: " + WiFi.localIP().toString());
+
 }
 
 void ConfigureWebpages(AsyncWebServer &server) {
@@ -239,12 +245,12 @@ void ConfigureWebpages(AsyncWebServer &server) {
     });
     server.on("/green4", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Sending green4 IR code:");
-        irsend.sendNEC(0xFF188E7, 32);
+        irsend.sendNEC(0xFF18E7, 32);
         request->send(200);
     });
     server.on("/blue4", HTTP_GET, [](AsyncWebServerRequest *request) {
         Serial.println("Sending blue4 IR code:");
-        irsend.sendNEC(0xFF58A7, 32); // TODO: bad code, need redecoding
+        irsend.sendNEC(0xFF48B7, 32); // TODO: bad code, need redecoding
         request->send(200);
     });
     server.on("/fade", HTTP_GET, [](AsyncWebServerRequest *request) {
